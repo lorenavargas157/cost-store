@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="logo.p.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>COST – Contacto</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --negro: #111111;
+      --negro2: #1a1a1a;
+      --negro3: #222222;
+      --blanco: #ffffff;
+      --gris-claro: #f5f5f5;
+      --gris-medio: #e8e8e8;
+      --gris: #999999;
+      --gris-texto: #555555;
+      --dorado: #b8963e;
+      --dorado-claro: #d4af5a;
+      --acento: #111111;
+      --fondo: #ffffff;
+      --fondo2: #f5f5f5;
+      --ok: #5a9a5a;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--fondo);
+      color: var(--negro);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      background: #111111;
+      color: #ffffff;
+      font-weight: 700;
+      text-align: center;
+      padding: 8px 20px;
+      font-size: 11px;
+      letter-spacing: 3px;
+      border-bottom: none;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #e8e8e8;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 0 40px; height: 64px;
+    }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      text-decoration: none; color: #111111;
+      font-family: 'Cinzel', serif; font-size: 11px;
+      letter-spacing: 2px; text-transform: uppercase; transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--dorado); }
+    .nav-links a.active { color: var(--dorado); border-bottom: 1px solid var(--dorado); padding-bottom: 2px; }
+    .nav-logo {
+      font-family: 'Cinzel', serif; font-size: 24px;
+      font-weight: 700; letter-spacing: 8px;
+      color: #111111; text-decoration: none;
+    }
+    .nav-icons { display: flex; gap: 20px; align-items: center; }
+    .nav-icons a {
+      color: #111111; text-decoration: none;
+      transition: color 0.3s; position: relative;
+    }
+    .nav-icons a:hover { color: var(--dorado); }
+    .cart-badge {
+      position: absolute; top: -6px; right: -8px;
+      background: #111111; color: #ffffff;
+      font-family: 'Cinzel', serif; font-size: 9px; font-weight: 700;
+      width: 16px; height: 16px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; background: none; border: none; padding: 4px;
+    }
+    .hamburger span { width: 22px; height: 1.5px; background: #111111; display: block; }
+
+    /* ── HERO CONTACTO ── */
+    .page-hero {
+      position: relative;
+      background: #f5f5f5;
+      border-bottom: 1px solid #e8e8e8;
+      padding: 80px 40px 72px;
+      text-align: center;
+      overflow: hidden;
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: repeating-linear-gradient(
+        0deg, transparent, transparent 59px,
+        rgba(0,0,0,0.025) 59px, rgba(0,0,0,0.025) 60px
+      ), repeating-linear-gradient(
+        90deg, transparent, transparent 59px,
+        rgba(0,0,0,0.025) 59px, rgba(0,0,0,0.025) 60px
+      );
+      pointer-events: none;
+    }
+    .hero-logo-small {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      mix-blend-mode: multiply;
+      filter: brightness(1.1) contrast(1.05);
+      margin: 0 auto 24px;
+      display: block;
+      opacity: 0.85;
+    }
+    .page-hero-eyebrow {
+      font-family: 'Cinzel', serif; font-size: 10px;
+      letter-spacing: 5px; color: var(--dorado);
+      text-transform: uppercase; margin-bottom: 12px;
+    }
+    .page-hero-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(28px, 5vw, 52px);
+      font-weight: 700; letter-spacing: 8px;
+      text-transform: uppercase; color: #111111;
+      margin-bottom: 16px;
+    }
+    .page-hero-sub {
+      font-size: 17px; font-style: italic;
+      color: var(--gris-texto); max-width: 500px; margin: 0 auto;
+    }
+    .breadcrumb {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; margin-top: 24px;
+      font-family: 'Cinzel', serif; font-size: 10px;
+      letter-spacing: 2px; color: #999999;
+    }
+    .breadcrumb a { color: #999999; text-decoration: none; transition: color 0.3s; }
+    .breadcrumb a:hover { color: #111111; }
+    .breadcrumb-sep { color: #cccccc; font-size: 8px; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      display: flex; align-items: center; gap: 16px;
+      padding: 0 40px; max-width: 1200px; margin: 0 auto;
+    }
+    .divider-line { flex: 1; height: 1px; background: linear-gradient(to right, transparent, #e8e8e8, transparent); }
+    .divider-ornament { color: var(--dorado); font-size: 12px; letter-spacing: 4px; }
+
+    /* ── TARJETAS INFO ── */
+    .info-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+    .info-card {
+      background: #f5f5f5;
+      padding: 36px 32px;
+      text-align: center;
+      border: 1px solid #e8e8e8;
+      transition: border-color 0.3s;
+    }
+    .info-card:hover { border-color: var(--dorado); }
+    .info-card-icon {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 1px solid #e8e8e8;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .info-card-icon svg { width: 20px; height: 20px; stroke: var(--dorado); fill: none; stroke-width: 1.5; }
+    .info-card-title {
+      font-family: 'Cinzel', serif; font-size: 11px;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: #111111; margin-bottom: 12px;
+    }
+    .info-card-value {
+      font-size: 16px; color: #111111; margin-bottom: 4px;
+    }
+    .info-card-sub { font-size: 13px; color: var(--gris-texto); font-style: italic; }
+    .info-card-link {
+      display: inline-block; margin-top: 14px;
+      font-family: 'Cinzel', serif; font-size: 9px;
+      letter-spacing: 2px; color: var(--dorado);
+      text-decoration: none; border-bottom: 1px solid var(--dorado);
+      padding-bottom: 2px; transition: color 0.3s, border-color 0.3s;
+    }
+    .info-card-link:hover { color: var(--dorado-claro); border-color: var(--dorado-claro); }
+
+    /* ── LAYOUT PRINCIPAL ── */
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 64px 40px;
+      align-items: start;
+    }
+
+    /* ── FORMULARIO ── */
+    .contact-form-col {
+      padding-right: 56px;
+    }
+    .col-eyebrow {
+      font-family: 'Cinzel', serif; font-size: 10px;
+      letter-spacing: 4px; color: var(--dorado);
+      text-transform: uppercase; margin-bottom: 12px;
+    }
+    .col-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(20px, 2.5vw, 30px);
+      font-weight: 400; letter-spacing: 3px;
+      text-transform: uppercase; color: #111111;
+      margin-bottom: 10px;
+    }
+    .col-sub {
+      font-size: 15px; color: var(--gris-texto);
+      font-style: italic; margin-bottom: 36px;
+      line-height: 1.7;
+    }
+
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block;
+      font-family: 'Cinzel', serif; font-size: 9px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--gris-texto); margin-bottom: 7px;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      background: #ffffff;
+      border: 1px solid #e8e8e8;
+      color: #111111;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      -webkit-appearance: none;
+    }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: var(--gris); }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: #111111;
+      background: #ffffff;
+    }
+    .form-group.has-error input,
+    .form-group.has-error textarea,
+    .form-group.has-error select { border-color: #c0604a; }
+    .form-error {
+      font-size: 12px; color: #c0604a;
+      font-style: italic; margin-top: 5px;
+      display: none;
+    }
+    .form-group.has-error .form-error { display: block; }
+
+    .form-group textarea { resize: vertical; min-height: 130px; }
+
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .form-group select {
+      background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23b8963e' stroke-width='1.2'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-color: #ffffff;
+      cursor: pointer;
+    }
+    .form-group select option { background: #ffffff; color: #111111; }
+
+    .form-check {
+      display: flex; align-items: flex-start; gap: 10px;
+      margin-bottom: 24px; cursor: pointer;
+    }
+    .form-check-box {
+      width: 16px; height: 16px; flex-shrink: 0; margin-top: 3px;
+      border: 1px solid #e8e8e8;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; cursor: pointer;
+    }
+    .form-check-box.checked {
+      background: #111111; border-color: #111111;
+    }
+    .form-check-box.checked::after {
+      content: '✓'; font-size: 10px; color: #ffffff; font-weight: 700;
+    }
+    .form-check-text {
+      font-size: 13px; color: var(--gris-texto); line-height: 1.5;
+    }
+
+    .btn-send {
+      width: 100%;
+      font-family: 'Cinzel', serif; font-size: 11px;
+      letter-spacing: 4px; text-transform: uppercase;
+      color: #ffffff; background: #111111;
+      font-weight: 700;
+      border: none; padding: 16px; cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .btn-send:hover { background: #333333; transform: translateY(-2px); }
+    .btn-send svg { width: 16px; height: 16px; stroke: #ffffff; fill: none; stroke-width: 1.5; }
+
+    /* Éxito */
+    .form-success {
+      display: none;
+      text-align: center;
+      padding: 48px 24px;
+      border: 1px solid rgba(90,154,90,0.2);
+      background: rgba(90,154,90,0.04);
+    }
+    .form-success.show { display: block; }
+    .success-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: rgba(90,154,90,0.1);
+      border: 1px solid rgba(90,154,90,0.3);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px; font-size: 22px;
+    }
+    .success-title {
+      font-family: 'Cinzel', serif; font-size: 16px;
+      letter-spacing: 3px; color: #111111; margin-bottom: 10px;
+    }
+    .success-sub { font-size: 14px; color: var(--gris-texto); font-style: italic; }
+
+    /* ── COLUMNA DERECHA INFO ── */
+    .contact-info-col {
+      padding-left: 56px;
+      border-left: 1px solid #e8e8e8;
+    }
+
+    /* Horarios */
+    .schedule-block { margin-bottom: 40px; }
+    .schedule-row {
+      display: flex; justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #e8e8e8;
+      font-size: 14px;
+    }
+    .schedule-row:last-child { border-bottom: none; }
+    .schedule-day { color: var(--gris-texto); }
+    .schedule-time { color: #111111; }
+    .schedule-closed { color: var(--gris); font-style: italic; }
+
+    /* Redes sociales */
+    .social-block { margin-bottom: 40px; }
+    .social-links { display: flex; gap: 10px; flex-wrap: wrap; }
+    .social-link {
+      display: flex; align-items: center; gap: 8px;
+      font-family: 'Cinzel', serif; font-size: 10px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: #111111; text-decoration: none;
+      border: 1px solid #e8e8e8;
+      padding: 10px 16px; transition: all 0.3s;
+    }
+    .social-link:hover {
+      border-color: #111111; color: #111111;
+      background: #f5f5f5;
+    }
+    .social-link svg { width: 14px; height: 14px; fill: currentColor; }
+
+    /* FAQ rápido */
+    .faq-block {}
+    .faq-item {
+      padding: 14px 0;
+      border-bottom: 1px solid #e8e8e8;
+      cursor: pointer;
+    }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-q {
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: 'Cinzel', serif; font-size: 11px;
+      letter-spacing: 1px; color: #111111; gap: 12px;
+    }
+    .faq-arrow { color: var(--dorado); font-size: 12px; transition: transform 0.3s; flex-shrink: 0; }
+    .faq-item.open .faq-arrow { transform: rotate(45deg); }
+    .faq-a {
+      max-height: 0; overflow: hidden;
+      font-size: 13px; color: var(--gris-texto);
+      line-height: 1.7; transition: max-height 0.35s ease, padding 0.3s;
+    }
+    .faq-item.open .faq-a { max-height: 200px; padding-top: 10px; }
+
+    /* ── BANNER WHATSAPP ── */
+    .wa-banner {
+      background: #111111;
+      color: #ffffff;
+      border-top: 1px solid rgba(37,211,102,0.15);
+      border-bottom: 1px solid rgba(37,211,102,0.15);
+      padding: 48px 40px;
+      text-align: center;
+    }
+    .wa-banner-eyebrow {
+      font-family: 'Cinzel', serif; font-size: 10px;
+      letter-spacing: 4px; color: rgba(37,211,102,0.7);
+      text-transform: uppercase; margin-bottom: 12px;
+    }
+    .wa-banner-title {
+      font-family: 'Cinzel', serif; font-size: clamp(18px, 3vw, 28px);
+      letter-spacing: 4px; color: var(--blanco); margin-bottom: 8px;
+    }
+    .wa-banner-sub {
+      font-size: 15px; font-style: italic; color: var(--gris);
+      margin-bottom: 28px;
+    }
+    .btn-whatsapp {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: 'Cinzel', serif; font-size: 11px;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: var(--negro); background: #25D366;
+      text-decoration: none; padding: 14px 36px;
+      transition: background 0.3s, transform 0.2s;
+      box-shadow: 0 4px 24px rgba(37,211,102,0.25);
+    }
+    .btn-whatsapp:hover { background: #20c05c; transform: translateY(-2px); }
+    .btn-whatsapp svg { width: 18px; height: 18px; fill: var(--negro); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #111111;
+      color: #ffffff;
+      border-top: none;
+      padding: 60px 40px 30px;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr;
+      gap: 48px; max-width: 1200px; margin: 0 auto 40px;
+    }
+    .footer-brand-name {
+      font-family: 'Cinzel', serif; font-size: 28px;
+      letter-spacing: 6px; color: #ffffff; margin-bottom: 12px;
+    }
+    .footer-brand-desc { font-size: 14px; color: #999999; line-height: 1.7; margin-bottom: 20px; max-width: 260px; }
+    .footer-payments { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .payment-badge {
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+      padding: 5px 10px; font-family: 'Cinzel', serif; font-size: 9px;
+      letter-spacing: 1px; color: #ffffff; border-radius: 2px;
+    }
+    .footer-col-title {
+      font-family: 'Cinzel', serif; font-size: 11px;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: #ffffff; margin-bottom: 20px;
+    }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-links a { text-decoration: none; color: #999999; font-size: 14px; transition: color 0.3s; }
+    .footer-links a:hover { color: #ffffff; }
+    .footer-contact-item { font-size: 14px; color: #999999; margin-bottom: 8px; }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.06); padding-top: 24px;
+      text-align: center; font-size: 11px; color: rgba(255,255,255,0.4);
+      letter-spacing: 1px; max-width: 1200px; margin: 0 auto;
+    }
+
+    /* ── WHATSAPP FLOTANTE ── */
+    .whatsapp-btn {
+      position: fixed; bottom: 28px; right: 28px; z-index: 999;
+      width: 52px; height: 52px; background: #25D366; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; text-decoration: none;
+      box-shadow: 0 4px 20px rgba(37,211,102,0.35);
+      transition: transform 0.3s;
+    }
+    .whatsapp-btn:hover { transform: scale(1.1); }
+    .whatsapp-btn svg { width: 26px; height: 26px; fill: white; }
+
+    /* ── MOBILE MENU ── */
+    .mobile-menu {
+      position: fixed; inset: 0; background: #ffffff;
+      z-index: 300; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 32px; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .mobile-menu.open { opacity: 1; pointer-events: all; }
+    .mobile-menu a {
+      font-family: 'Cinzel', serif; font-size: 20px;
+      letter-spacing: 5px; text-transform: uppercase;
+      color: #111111; text-decoration: none;
+    }
+    .mobile-menu-close {
+      position: absolute; top: 24px; right: 24px;
+      background: none; border: none; color: #111111; font-size: 28px; cursor: pointer;
+    }
+
+    /* ── REVEAL ── */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .contact-layout { grid-template-columns: 1fr; padding: 40px 20px; }
+      .contact-form-col { padding-right: 0; margin-bottom: 48px; }
+      .contact-info-col { padding-left: 0; border-left: none; padding-top: 40px; border-top: 1px solid #e8e8e8; }
+      .info-cards { grid-template-columns: 1fr; padding: 0 20px; }
+      .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .page-hero { padding: 56px 20px 48px; }
+      .wa-banner { padding: 40px 20px; }
+      footer { padding: 48px 20px 24px; }
+      .form-row-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <div class="topbar">✦ ENVÍOS A TODO COLOMBIA · PAGOS SEGUROS PSE & TARJETAS ✦</div>
+
+  <!-- NAV -->
+  <nav>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="catalogo.html">Categorías</a></li>
+      <li><a href="catalogo.html?cat=caballero">Caballero</a></li>
+      <li><a href="catalogo.html?cat=dama">Dama</a></li>
+    </ul>
+    <a href="index.html" class="nav-logo">COST</a>
+    <div class="nav-icons">
+      <a href="#" title="Buscar">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </a>
+      <a href="#" title="Favoritos">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </a>
+      <a href="#" id="cart-trigger" title="Carrito">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span class="cart-badge">0</span>
+      </a>
+      <button class="hamburger" id="hamburger-btn"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobile-menu">
+    <button class="mobile-menu-close" id="mobile-close">✕</button>
+    <a href="index.html">Home</a>
+    <a href="catalogo.html">Categorías</a>
+    <a href="catalogo.html?cat=caballero">Caballero</a>
+    <a href="catalogo.html?cat=dama">Dama</a>
+    <a href="contacto.html">Contacto</a>
+  </div>
+
+  <!-- HERO -->
+  <div class="page-hero">
+    <img src="logo.jpeg" alt="COST" class="hero-logo-small" />
+    <p class="page-hero-eyebrow">Estamos aquí para ti</p>
+    <h1 class="page-hero-title">Contacto</h1>
+    <p class="page-hero-sub">Escríbenos, llámanos o visítanos. Respondemos con gusto.</p>
+    <div class="breadcrumb">
+      <a href="index.html">Home</a>
+      <span class="breadcrumb-sep">✦</span>
+      <span style="color:var(--negro);">Contacto</span>
+    </div>
+  </div>
+
+  <!-- TARJETAS INFO -->
+  <div style="padding: 56px 0 0;">
+    <div class="info-cards reveal">
+      <div class="info-card">
+        <div class="info-card-icon">
+          <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.62 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.96-.97a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16l.27.92z"/></svg>
+        </div>
+        <div class="info-card-title">Teléfono</div>
+        <div class="info-card-value">+57 301 8787556</div>
+        <div class="info-card-sub">Lun – Sáb · 9am – 6pm</div>
+        <a href="tel:+573018787556" class="info-card-link">Llamar ahora →</a>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <div class="info-card-title">Correo</div>
+        <div class="info-card-value">contacto@costo.com</div>
+        <div class="info-card-sub">Respuesta en menos de 24h</div>
+        <a href="mailto:contacto@costo.com" class="info-card-link">Enviar correo →</a>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div class="info-card-title">Ubicación</div>
+        <div class="info-card-value">Colombia</div>
+        <div class="info-card-sub">Envíos a todo el país</div>
+        <a href="#mapa" class="info-card-link">Ver en mapa →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIVIDER -->
+  <div style="padding: 56px 0 0;">
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-ornament">✦</div>
+      <div class="divider-line"></div>
+    </div>
+  </div>
+
+  <!-- LAYOUT CONTACTO -->
+  <div class="contact-layout">
+
+    <!-- FORMULARIO -->
+    <div class="contact-form-col reveal">
+      <p class="col-eyebrow">Escríbenos</p>
+      <h2 class="col-title">Envíanos un Mensaje</h2>
+      <p class="col-sub">¿Tienes dudas sobre un pedido, tallas o nuestra colección? Con gusto te ayudamos.</p>
+
+      <div id="contact-form">
+        <div class="form-row-2" style="margin-bottom:16px;">
+          <div class="form-group" id="fg-nombre">
+            <label>Nombre *</label>
+            <input type="text" id="c-nombre" placeholder="Tu nombre" />
+            <div class="form-error">Este campo es requerido</div>
+          </div>
+          <div class="form-group" id="fg-apellido">
+            <label>Apellido *</label>
+            <input type="text" id="c-apellido" placeholder="Tu apellido" />
+            <div class="form-error">Este campo es requerido</div>
+          </div>
+        </div>
+
+        <div class="form-group" id="fg-email" style="margin-bottom:16px;">
+          <label>Correo electrónico *</label>
+          <input type="email" id="c-email" placeholder="correo@ejemplo.com" />
+          <div class="form-error">Ingresa un correo válido</div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:16px;">
+          <label>Teléfono</label>
+          <input type="tel" id="c-tel" placeholder="+57 300 000 0000" />
+        </div>
+
+        <div class="form-group" style="margin-bottom:16px;">
+          <label>Asunto *</label>
+          <select id="c-asunto">
+            <option value="">Seleccionar tema...</option>
+            <option>Consulta sobre un producto</option>
+            <option>Estado de mi pedido</option>
+            <option>Cambios y devoluciones</option>
+            <option>Tallas y disponibilidad</option>
+            <option>Colaboraciones</option>
+            <option>Otro</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="fg-mensaje" style="margin-bottom:16px;">
+          <label>Mensaje *</label>
+          <textarea id="c-mensaje" placeholder="Cuéntanos en qué podemos ayudarte..."></textarea>
+          <div class="form-error">Escribe tu mensaje</div>
+        </div>
+
+        <div class="form-check" onclick="toggleCheck(this)">
+          <div class="form-check-box"></div>
+          <div class="form-check-text">
+            Acepto el tratamiento de mis datos personales conforme a la política de privacidad de COST.
+          </div>
+        </div>
+
+        <button class="btn-send" onclick="sendForm()">
+          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Enviar Mensaje
+        </button>
+      </div>
+
+      <!-- ÉXITO -->
+      <div class="form-success" id="form-success">
+        <div class="success-icon">✓</div>
+        <div class="success-title">¡Mensaje Enviado!</div>
+        <div class="success-sub">Gracias por contactarnos. Te respondemos en menos de 24 horas.</div>
+      </div>
+    </div>
+
+    <!-- INFO DERECHA -->
+    <div class="contact-info-col reveal">
+
+      <!-- HORARIOS -->
+      <div class="schedule-block">
+        <p class="col-eyebrow">Atención al cliente</p>
+        <h3 class="col-title" style="font-size:22px; margin-bottom:20px;">Horarios</h3>
+        <div class="schedule-row">
+          <span class="schedule-day">Lunes – Viernes</span>
+          <span class="schedule-time">9:00 am – 6:00 pm</span>
+        </div>
+        <div class="schedule-row">
+          <span class="schedule-day">Sábado</span>
+          <span class="schedule-time">10:00 am – 4:00 pm</span>
+        </div>
+        <div class="schedule-row">
+          <span class="schedule-day">Domingo</span>
+          <span class="schedule-closed">Cerrado</span>
+        </div>
+        <div class="schedule-row">
+          <span class="schedule-day">Festivos</span>
+          <span class="schedule-closed">Cerrado</span>
+        </div>
+      </div>
+
+      <!-- REDES SOCIALES -->
+      <div class="social-block">
+        <p class="col-eyebrow" style="margin-bottom:12px;">Síguenos</p>
+        <div class="social-links">
+          <a href="#" class="social-link">
+            <svg viewBox="0 0 24 24" width="14" height="14"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            Instagram
+          </a>
+          <a href="#" class="social-link">
+            <svg viewBox="0 0 24 24" width="14" height="14"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Facebook
+          </a>
+          <a href="https://wa.me/573018787556" class="social-link" target="_blank">
+            <svg viewBox="0 0 24 24" width="14" height="14"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+            WhatsApp
+          </a>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="faq-block">
+        <p class="col-eyebrow" style="margin-bottom:4px;">Preguntas frecuentes</p>
+        <h3 class="col-title" style="font-size:20px; margin-bottom:20px;">FAQ</h3>
+
+        <div class="faq-item open" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            ¿Cuánto demora el envío?
+            <span class="faq-arrow">+</span>
+          </div>
+          <div class="faq-a">Los envíos a todo Colombia tardan entre 3 y 5 días hábiles una vez confirmado el pago. Para ciudades principales puede ser 2 a 3 días.</div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            ¿Puedo cambiar mi talla?
+            <span class="faq-arrow">+</span>
+          </div>
+          <div class="faq-a">Sí, aceptamos cambios dentro de los 30 días siguientes a la entrega, siempre que el producto esté sin uso y en su empaque original. Escríbenos al WhatsApp para gestionar el cambio.</div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            ¿Cuáles son los métodos de pago?
+            <span class="faq-arrow">+</span>
+          </div>
+          <div class="faq-a">Aceptamos PSE (débito bancario), tarjetas débito y crédito (Visa, Mastercard) y contraentrega en ciudades principales.</div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            ¿Tienen tienda física?
+            <span class="faq-arrow">+</span>
+          </div>
+          <div class="faq-a">Por ahora somos 100% online. Puedes adquirir nuestros productos a través de esta tienda o escribiéndonos directamente por WhatsApp.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BANNER WHATSAPP -->
+  <div class="wa-banner">
+    <p class="wa-banner-eyebrow">Respuesta inmediata</p>
+    <h2 class="wa-banner-title">¿Prefieres hablar directo?</h2>
+    <p class="wa-banner-sub">Escríbenos por WhatsApp y te respondemos al instante</p>
+    <a href="https://wa.me/573018787556?text=Hola!%20Tengo%20una%20consulta%20sobre%20COST" class="btn-whatsapp" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+      Escribir por WhatsApp
+    </a>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-name">COST</div>
+        <p class="footer-brand-desc">Moda masculina inspirada en el estilo grecorromano. Descubre nuestra colección exclusiva.</p>
+        <div class="footer-payments">
+          <span class="payment-badge">PSE</span>
+          <span class="payment-badge">VISA</span>
+          <span class="payment-badge">MC</span>
+          <span class="payment-badge">DÉBITO</span>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Categorías</div>
+        <ul class="footer-links">
+          <li><a href="catalogo.html?cat=caballero">Caballero</a></li>
+          <li><a href="catalogo.html?cat=dama">Dama</a></li>
+          <li><a href="catalogo.html">Nueva Colección</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Contacto</div>
+        <p class="footer-contact-item">+57 301 8787556</p>
+        <p class="footer-contact-item">contacto@costo.com</p>
+        <div style="margin-top:16px; display:flex; gap:12px;">
+          <span class="payment-badge">VISA</span>
+          <span class="payment-badge">MC</span>
+          <span class="payment-badge">PSE</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2026 COST. Todos los derechos reservados. Sitio web desarrollado por CrascPT
+    </div>
+  </footer>
+
+  <!-- CARRITO SIDEBAR -->
+  <div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
+  <div class="cart-sidebar" id="cart-sidebar" style="position:fixed;top:0;right:-420px;width:380px;height:100vh;background:var(--negro2);border-left:1px solid rgba(201,168,76,0.2);z-index:201;transition:right 0.4s ease;display:flex;flex-direction:column;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:24px;border-bottom:1px solid rgba(201,168,76,0.15);">
+      <span style="font-family:'Cinzel',serif;font-size:14px;letter-spacing:4px;text-transform:uppercase;color:var(--blanco);">Mi Carrito</span>
+      <button onclick="closeCart()" style="background:none;border:none;color:var(--blanco);font-size:20px;cursor:pointer;">✕</button>
+    </div>
+    <div id="cart-body" style="flex:1;overflow-y:auto;padding:24px;">
+      <p style="text-align:center;padding:60px 20px;color:var(--gris);font-style:italic;">Tu carrito está vacío.</p>
+    </div>
+    <div style="padding:24px;border-top:1px solid rgba(201,168,76,0.15);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:16px;font-family:'Cinzel',serif;font-size:13px;letter-spacing:2px;color:var(--gris-claro);">
+        <span>Subtotal</span>
+        <span id="cart-total" style="color:var(--dorado-claro);font-size:18px;">$0</span>
+      </div>
+      <a href="checkout.html" style="display:block;text-align:center;font-family:'Cinzel',serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--negro);background:var(--dorado);padding:14px;text-decoration:none;margin-bottom:10px;">Finalizar Compra</a>
+      <button onclick="closeCart()" style="display:block;width:100%;text-align:center;font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gris-claro);background:transparent;border:1px solid rgba(201,168,76,0.35);padding:12px;cursor:pointer;">Seguir Comprando</button>
+    </div>
+  </div>
+
+  <!-- WHATSAPP -->
+  <a href="https://wa.me/573018787556" class="whatsapp-btn" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+  </a>
+
+  <script>
+    // ── Carrito ──
+    let cart = [];
+    function openCart() {
+      document.getElementById('cart-sidebar').style.right = '0';
+      document.getElementById('cart-overlay').style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;opacity:1;pointer-events:all;transition:opacity 0.3s;';
+    }
+    function closeCart() {
+      document.getElementById('cart-sidebar').style.right = '-420px';
+      document.getElementById('cart-overlay').style.opacity = '0';
+      document.getElementById('cart-overlay').style.pointerEvents = 'none';
+    }
+    document.getElementById('cart-trigger').addEventListener('click', e => { e.preventDefault(); openCart(); });
+
+    // ── FAQ ──
+    function toggleFaq(item) {
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    }
+
+    // ── Checkbox ──
+    function toggleCheck(el) {
+      el.querySelector('.form-check-box').classList.toggle('checked');
+    }
+
+    // ── Formulario ──
+    function sendForm() {
+      let valid = true;
+      const checks = [
+        { id: 'c-nombre', fg: 'fg-nombre', type: 'text' },
+        { id: 'c-apellido', fg: 'fg-apellido', type: 'text' },
+        { id: 'c-email', fg: 'fg-email', type: 'email' },
+        { id: 'c-mensaje', fg: 'fg-mensaje', type: 'text' },
+      ];
+      checks.forEach(({ id, fg, type }) => {
+        const el = document.getElementById(id);
+        const fg_el = document.getElementById(fg);
+        let err = !el.value.trim();
+        if (!err && type === 'email') err = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value);
+        fg_el.classList.toggle('has-error', err);
+        if (err) valid = false;
+      });
+
+      if (!valid) return;
+
+      // Simular envío
+      const btn = document.querySelector('.btn-send');
+      btn.textContent = 'Enviando...';
+      btn.style.opacity = '0.7';
+      btn.style.pointerEvents = 'none';
+
+      setTimeout(() => {
+        document.getElementById('contact-form').style.display = 'none';
+        document.getElementById('form-success').classList.add('show');
+      }, 1500);
+    }
+
+    // Limpiar errores al escribir
+    document.querySelectorAll('.form-group input, .form-group textarea').forEach(el => {
+      el.addEventListener('input', () => el.closest('.form-group').classList.remove('has-error'));
+    });
+
+    // ── Mobile menu ──
+    document.getElementById('hamburger-btn').addEventListener('click', () => {
+      document.getElementById('mobile-menu').classList.add('open');
+    });
+    document.getElementById('mobile-close').addEventListener('click', () => {
+      document.getElementById('mobile-menu').classList.remove('open');
+    });
+
+    // ── Reveal scroll ──
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

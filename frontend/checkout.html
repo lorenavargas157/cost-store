@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="logo.p.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>COST – Finalizar Compra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --negro: #111111;
+      --negro2: #1a1a1a;
+      --negro3: #222222;
+      --blanco: #ffffff;
+      --gris-claro: #f5f5f5;
+      --gris-medio: #e8e8e8;
+      --gris: #999999;
+      --gris-texto: #555555;
+      --dorado: #b8963e;
+      --dorado-claro: #d4af5a;
+      --acento: #111111;
+      --fondo: #ffffff;
+      --fondo2: #f5f5f5;
+      --error: #c0604a;
+      --ok: #5a9a5a;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: #ffffff;
+      color: var(--negro);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV SIMPLE ── */
+    .checkout-nav {
+      background: #ffffff;
+      border-bottom: 1px solid #e8e8e8;
+      padding: 0 40px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: 'Cinzel', serif;
+      font-size: 24px; font-weight: 700;
+      letter-spacing: 8px; color: #111111;
+      text-decoration: none;
+    }
+    .nav-back {
+      font-family: 'Cinzel', serif;
+      font-size: 10px; letter-spacing: 2px;
+      color: #555555; text-decoration: none;
+      display: flex; align-items: center; gap: 8px;
+      transition: color 0.3s;
+    }
+    .nav-back:hover { color: #111111; }
+    .nav-secure {
+      display: flex; align-items: center; gap: 6px;
+      font-family: 'Cinzel', serif; font-size: 10px;
+      letter-spacing: 2px; color: var(--gris-texto);
+    }
+    .nav-secure svg { width: 14px; height: 14px; stroke: var(--dorado); fill: none; }
+
+    /* ── STEPS ── */
+    .steps-bar {
+      background: #ffffff;
+      border-bottom: 1px solid #e8e8e8;
+      padding: 16px 40px;
+    }
+    .steps {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .step {
+      display: flex; align-items: center; gap: 8px;
+      font-family: 'Cinzel', serif; font-size: 10px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: #999999; transition: color 0.3s;
+    }
+    .step.active { color: #111111; }
+    .step.done { color: #111111; }
+    .step-num {
+      width: 24px; height: 24px; border-radius: 50%;
+      border: 1px solid #e8e8e8;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; transition: all 0.3s;
+      flex-shrink: 0;
+      color: #999999;
+    }
+    .step.active .step-num {
+      background: #111111; border-color: #111111;
+      color: #ffffff;
+    }
+    .step.done .step-num {
+      background: transparent; border-color: #111111;
+      color: #111111;
+    }
+    .step-line {
+      flex: 1; height: 1px;
+      background: #e8e8e8;
+      margin: 0 12px;
+    }
+    .step-line.done { background: #111111; }
+
+    /* ── LAYOUT CHECKOUT ── */
+    .checkout-layout {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 0;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 40px;
+      align-items: start;
+    }
+
+    /* ── FORMULARIO ── */
+    .form-col { padding-right: 56px; }
+
+    .form-section { margin-bottom: 40px; }
+    .form-section-title {
+      font-family: 'Cinzel', serif; font-size: 13px;
+      letter-spacing: 4px; text-transform: uppercase;
+      color: var(--negro); margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e8e8e8;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .form-section-title .step-icon {
+      width: 20px; height: 20px;
+      border-radius: 50%; background: #f5f5f5;
+      border: 1px solid #e8e8e8;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; color: var(--negro); flex-shrink: 0;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .form-row.full { grid-template-columns: 1fr; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label {
+      font-family: 'Cinzel', serif; font-size: 9px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--gris-texto);
+    }
+    .field input, .field select, .field textarea {
+      background: #ffffff;
+      border: 1px solid #e8e8e8;
+      color: var(--negro);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      width: 100%;
+      -webkit-appearance: none;
+    }
+    .field input::placeholder, .field textarea::placeholder { color: var(--gris); }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      border-color: #111111;
+      background: #ffffff;
+    }
+    .field input.error { border-color: var(--error); }
+    .field-error {
+      font-size: 12px; color: var(--error);
+      font-style: italic; display: none;
+    }
+    .field.has-error .field-error { display: block; }
+    .field.has-error input { border-color: var(--error); }
+
+    .field select {
+      background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23111111' stroke-width='1.2'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-color: #ffffff;
+      cursor: pointer;
+    }
+    .field select option { background: #ffffff; color: var(--negro); }
+
+    /* ── MÉTODOS DE PAGO ── */
+    .payment-methods { display: flex; flex-direction: column; gap: 10px; }
+    .payment-method {
+      border: 1px solid #e8e8e8;
+      padding: 16px 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .payment-method:hover { border-color: #111111; }
+    .payment-method.selected {
+      border-color: #111111;
+      background: #f5f5f5;
+    }
+    .pm-radio {
+      width: 16px; height: 16px; border-radius: 50%;
+      border: 1px solid #e8e8e8;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.2s;
+    }
+    .payment-method.selected .pm-radio {
+      border-color: #111111;
+    }
+    .payment-method.selected .pm-radio::after {
+      content: ''; width: 8px; height: 8px;
+      border-radius: 50%; background: #111111;
+    }
+    .pm-info { flex: 1; }
+    .pm-name {
+      font-family: 'Cinzel', serif; font-size: 11px;
+      letter-spacing: 2px; color: var(--negro); margin-bottom: 2px;
+    }
+    .pm-desc { font-size: 12px; color: var(--gris-texto); font-style: italic; }
+    .pm-badges { display: flex; gap: 6px; }
+    .pm-badge {
+      background: #f5f5f5;
+      border: 1px solid #e8e8e8;
+      padding: 3px 8px;
+      font-family: 'Cinzel', serif; font-size: 8px;
+      letter-spacing: 1px; color: var(--gris-texto); border-radius: 2px;
+    }
+
+    /* Detalle tarjeta */
+    .card-details {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid #e8e8e8;
+      display: none;
+    }
+    .card-details.show { display: block; }
+    .card-number-wrap { position: relative; }
+    .card-type-icon {
+      position: absolute; right: 14px; top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Cinzel', serif; font-size: 10px;
+      letter-spacing: 1px; color: var(--gris-texto); opacity: 0.8;
+    }
+
+    /* ── RESUMEN ── */
+    .summary-col {
+      background: #f5f5f5;
+      border: 1px solid #e8e8e8;
+      padding: 32px;
+      position: sticky;
+      top: 20px;
+    }
+    .summary-title {
+      font-family: 'Cinzel', serif; font-size: 12px;
+      letter-spacing: 4px; text-transform: uppercase;
+      color: var(--negro); margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e8e8e8;
+    }
+
+    .summary-items { margin-bottom: 24px; }
+    .summary-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    .summary-item:last-child { border-bottom: none; }
+    .summary-item-img {
+      width: 56px; height: 56px; flex-shrink: 0;
+      background: #ffffff;
+      border: 1px solid #e8e8e8;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; opacity: 0.5; color: var(--negro);
+      position: relative;
+    }
+    .item-qty-badge {
+      position: absolute; top: -6px; right: -6px;
+      background: #111111; color: #ffffff;
+      font-family: 'Cinzel', serif; font-size: 9px; font-weight: 700;
+      width: 18px; height: 18px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .summary-item-info { flex: 1; }
+    .summary-item-name {
+      font-family: 'Cinzel', serif; font-size: 11px;
+      letter-spacing: 1px; color: var(--negro); margin-bottom: 2px;
+    }
+    .summary-item-detail { font-size: 12px; color: var(--gris-texto); }
+    .summary-item-price { font-size: 16px; color: var(--negro); font-weight: 300; }
+
+    /* Cupón */
+    .coupon-wrap {
+      display: flex; gap: 8px;
+      margin-bottom: 20px;
+    }
+    .coupon-input {
+      flex: 1;
+      background: #ffffff;
+      border: 1px solid #e8e8e8;
+      color: var(--negro); font-family: 'Cormorant Garamond', serif;
+      font-size: 14px; padding: 10px 12px; outline: none;
+      transition: border-color 0.2s;
+    }
+    .coupon-input::placeholder { color: var(--gris); font-style: italic; }
+    .coupon-input:focus { border-color: #111111; }
+    .coupon-btn {
+      font-family: 'Cinzel', serif; font-size: 9px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: #111111; background: transparent;
+      border: 1px solid #111111; padding: 10px 16px;
+      cursor: pointer; transition: all 0.2s; white-space: nowrap;
+    }
+    .coupon-btn:hover { border-color: #111111; background: #f5f5f5; }
+    .coupon-ok {
+      font-size: 12px; color: var(--ok); font-style: italic;
+      margin-top: -12px; margin-bottom: 8px; display: none;
+    }
+
+    /* Totales */
+    .summary-totals { border-top: 1px solid #e8e8e8; padding-top: 16px; }
+    .total-row {
+      display: flex; justify-content: space-between;
+      padding: 6px 0; font-size: 14px; color: var(--gris-texto);
+    }
+    .total-row.big {
+      font-family: 'Cinzel', serif; font-size: 13px;
+      letter-spacing: 1px; color: var(--negro);
+      padding: 14px 0 0; margin-top: 8px;
+      border-top: 1px solid #e8e8e8;
+    }
+    .total-row.big .amount { color: #111111; font-size: 22px; font-weight: 300; }
+    .total-row .free { color: var(--ok); font-style: italic; }
+    .total-row .saved { color: var(--ok); }
+
+    .btn-pay {
+      width: 100%; margin-top: 20px;
+      font-family: 'Cinzel', serif; font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 4px; text-transform: uppercase;
+      color: #ffffff; background: #111111;
+      border: none; padding: 16px; cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .btn-pay:hover { background: #333333; transform: translateY(-2px); }
+    .btn-pay svg { width: 16px; height: 16px; stroke: #ffffff; fill: none; }
+    .btn-pay.loading {
+      opacity: 0.7; pointer-events: none;
+    }
+
+    .summary-secure {
+      display: flex; align-items: center; justify-content: center;
+      gap: 6px; margin-top: 14px;
+      font-family: 'Cinzel', serif; font-size: 9px;
+      letter-spacing: 2px; color: var(--gris-texto);
+    }
+    .summary-secure svg { width: 12px; height: 12px; stroke: var(--gris-texto); fill: none; }
+
+    /* ── CONFIRMACIÓN ── */
+    .confirm-screen {
+      display: none;
+      text-align: center;
+      padding: 80px 40px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .confirm-screen.show { display: block; }
+    .confirm-icon {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: rgba(90,154,90,0.1);
+      border: 1px solid rgba(90,154,90,0.3);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 28px;
+      font-size: 32px;
+    }
+    .confirm-title {
+      font-family: 'Cinzel', serif; font-size: 28px;
+      letter-spacing: 4px; color: var(--negro); margin-bottom: 16px;
+    }
+    .confirm-sub {
+      font-size: 16px; color: var(--gris-texto); margin-bottom: 12px; font-style: italic;
+    }
+    .confirm-ref {
+      font-family: 'Cinzel', serif; font-size: 12px;
+      letter-spacing: 3px; color: var(--dorado); margin-bottom: 40px;
+    }
+    .confirm-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-outline-confirm {
+      font-family: 'Cinzel', serif; font-size: 10px;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: #111111; background: transparent;
+      border: 1px solid #e8e8e8; padding: 12px 28px;
+      cursor: pointer; text-decoration: none; transition: all 0.3s;
+    }
+    .btn-outline-confirm:hover { border-color: #111111; background: #f5f5f5; }
+
+    /* ── FOOTER SIMPLE ── */
+    .checkout-footer {
+      background: #111111;
+      border-top: none;
+      padding: 24px 40px;
+      text-align: center;
+      font-family: 'Cinzel', serif; font-size: 9px;
+      letter-spacing: 2px; color: rgba(255,255,255,0.4);
+      margin-top: 60px;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .checkout-layout {
+        grid-template-columns: 1fr;
+        padding: 32px 20px;
+      }
+      .form-col { padding-right: 0; margin-bottom: 40px; }
+      .summary-col { position: static; }
+    }
+    @media (max-width: 600px) {
+      .checkout-nav { padding: 0 20px; }
+      .steps-bar { padding: 12px 20px; }
+      .step-label { display: none; }
+      .form-row { grid-template-columns: 1fr; }
+      .checkout-footer { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV SIMPLE -->
+  <nav class="checkout-nav">
+    <a href="catalogo.html" class="nav-back">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
+      Seguir comprando
+    </a>
+    <a href="index.html" class="nav-logo">COST</a>
+    <div class="nav-secure">
+      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Compra segura
+    </div>
+  </nav>
+
+  <!-- STEPS -->
+  <div class="steps-bar">
+    <div class="steps">
+      <div class="step done" id="step-1">
+        <div class="step-num">✓</div>
+        <span class="step-label">Carrito</span>
+      </div>
+      <div class="step-line done"></div>
+      <div class="step active" id="step-2">
+        <div class="step-num">2</div>
+        <span class="step-label">Datos</span>
+      </div>
+      <div class="step-line" id="line-2-3"></div>
+      <div class="step" id="step-3">
+        <div class="step-num">3</div>
+        <span class="step-label">Pago</span>
+      </div>
+      <div class="step-line" id="line-3-4"></div>
+      <div class="step" id="step-4">
+        <div class="step-num">4</div>
+        <span class="step-label">Confirmación</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECKOUT LAYOUT -->
+  <div class="checkout-layout" id="checkout-main">
+
+    <!-- FORMULARIO -->
+    <div class="form-col">
+
+      <!-- DATOS PERSONALES -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <div class="step-icon">1</div>
+          Datos de Contacto
+        </div>
+        <div class="form-row">
+          <div class="field" id="field-nombre">
+            <label>Nombre *</label>
+            <input type="text" id="nombre" placeholder="Tu nombre" />
+            <span class="field-error">Este campo es requerido</span>
+          </div>
+          <div class="field" id="field-apellido">
+            <label>Apellido *</label>
+            <input type="text" id="apellido" placeholder="Tu apellido" />
+            <span class="field-error">Este campo es requerido</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field" id="field-email">
+            <label>Correo electrónico *</label>
+            <input type="email" id="email" placeholder="correo@ejemplo.com" />
+            <span class="field-error">Ingresa un correo válido</span>
+          </div>
+          <div class="field" id="field-telefono">
+            <label>Teléfono *</label>
+            <input type="tel" id="telefono" placeholder="+57 300 000 0000" />
+            <span class="field-error">Este campo es requerido</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DIRECCIÓN -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <div class="step-icon">2</div>
+          Dirección de Envío
+        </div>
+        <div class="form-row full">
+          <div class="field" id="field-direccion">
+            <label>Dirección *</label>
+            <input type="text" id="direccion" placeholder="Calle, Carrera, Av..." />
+            <span class="field-error">Este campo es requerido</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label>Apartamento / Piso</label>
+            <input type="text" id="apto" placeholder="Apto, Casa, Oficina..." />
+          </div>
+          <div class="field" id="field-ciudad">
+            <label>Ciudad *</label>
+            <input type="text" id="ciudad" placeholder="Bogotá, Medellín..." />
+            <span class="field-error">Este campo es requerido</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field" id="field-dpto">
+            <label>Departamento *</label>
+            <select id="dpto">
+              <option value="">Seleccionar...</option>
+              <option>Antioquia</option>
+              <option>Atlántico</option>
+              <option>Bogotá D.C.</option>
+              <option>Bolívar</option>
+              <option>Boyacá</option>
+              <option>Caldas</option>
+              <option>Caquetá</option>
+              <option>Cauca</option>
+              <option>Cesar</option>
+              <option>Córdoba</option>
+              <option>Cundinamarca</option>
+              <option>Huila</option>
+              <option>La Guajira</option>
+              <option>Magdalena</option>
+              <option>Meta</option>
+              <option>Nariño</option>
+              <option>Norte de Santander</option>
+              <option>Quindío</option>
+              <option>Risaralda</option>
+              <option>San Andrés</option>
+              <option>Santander</option>
+              <option>Sucre</option>
+              <option>Tolima</option>
+              <option>Valle del Cauca</option>
+            </select>
+            <span class="field-error">Selecciona un departamento</span>
+          </div>
+          <div class="field">
+            <label>Código Postal</label>
+            <input type="text" id="cp" placeholder="Opcional" />
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="field">
+            <label>Notas del pedido</label>
+            <textarea id="notas" rows="3" placeholder="Instrucciones especiales de entrega..." style="resize:vertical; min-height:80px;"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- MÉTODO DE PAGO -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <div class="step-icon">3</div>
+          Método de Pago
+        </div>
+        <div class="payment-methods">
+
+          <!-- PSE -->
+          <div class="payment-method selected" id="pm-pse" onclick="selectPayment('pse')">
+            <div class="pm-radio"></div>
+            <div class="pm-info">
+              <div class="pm-name">PSE – Pago en línea</div>
+              <div class="pm-desc">Débito bancario seguro</div>
+            </div>
+            <div class="pm-badges">
+              <span class="pm-badge">PSE</span>
+            </div>
+          </div>
+
+          <!-- TARJETA -->
+          <div class="payment-method" id="pm-tarjeta" onclick="selectPayment('tarjeta')">
+            <div class="pm-radio"></div>
+            <div class="pm-info">
+              <div class="pm-name">Tarjeta Débito / Crédito</div>
+              <div class="pm-desc">Visa, Mastercard, American Express</div>
+            </div>
+            <div class="pm-badges">
+              <span class="pm-badge">VISA</span>
+              <span class="pm-badge">MC</span>
+            </div>
+          </div>
+
+          <!-- Detalle tarjeta -->
+          <div class="card-details" id="card-details">
+            <div class="form-row full" style="margin-bottom:12px;">
+              <div class="field card-number-wrap" style="position:relative;">
+                <label>Número de tarjeta</label>
+                <input type="text" id="card-num" placeholder="0000 0000 0000 0000" maxlength="19"
+                  oninput="formatCard(this)" />
+                <span class="card-type-icon" id="card-type"></span>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label>Vencimiento</label>
+                <input type="text" id="card-exp" placeholder="MM / AA" maxlength="7"
+                  oninput="formatExpiry(this)" />
+              </div>
+              <div class="field">
+                <label>CVV</label>
+                <input type="text" id="card-cvv" placeholder="•••" maxlength="4" />
+              </div>
+            </div>
+            <div class="form-row full" style="margin-bottom:0;">
+              <div class="field">
+                <label>Nombre en la tarjeta</label>
+                <input type="text" id="card-name" placeholder="Como aparece en tu tarjeta" />
+              </div>
+            </div>
+          </div>
+
+          <!-- CONTRAENTREGA -->
+          <div class="payment-method" id="pm-contra" onclick="selectPayment('contra')">
+            <div class="pm-radio"></div>
+            <div class="pm-info">
+              <div class="pm-name">Contraentrega</div>
+              <div class="pm-desc">Paga al recibir tu pedido (solo ciudades principales)</div>
+            </div>
+            <div class="pm-badges">
+              <span class="pm-badge">EFECTIVO</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /form-col -->
+
+    <!-- RESUMEN -->
+    <div class="summary-col">
+      <div class="summary-title">Resumen del Pedido</div>
+
+      <div class="summary-items" id="summary-items">
+        <!-- Ítems de ejemplo — se reemplaza dinámicamente -->
+        <div class="summary-item">
+          <div class="summary-item-img">
+            ✝
+            <div class="item-qty-badge">1</div>
+          </div>
+          <div class="summary-item-info">
+            <div class="summary-item-name">COST Noir T-Shirt</div>
+            <div class="summary-item-detail">Negro · Talla M</div>
+          </div>
+          <div class="summary-item-price">$32.990</div>
+        </div>
+      </div>
+
+      <!-- CUPÓN -->
+      <div class="coupon-wrap">
+        <input class="coupon-input" id="coupon-input" type="text" placeholder="Código de descuento" />
+        <button class="coupon-btn" onclick="applyCoupon()">Aplicar</button>
+      </div>
+      <div class="coupon-ok" id="coupon-ok">✓ Cupón COST10 aplicado — 10% de descuento</div>
+
+      <!-- TOTALES -->
+      <div class="summary-totals">
+        <div class="total-row">
+          <span>Subtotal</span>
+          <span id="subtotal">$32.990</span>
+        </div>
+        <div class="total-row" id="descuento-row" style="display:none;">
+          <span>Descuento (10%)</span>
+          <span class="saved" id="descuento-val">−$3.299</span>
+        </div>
+        <div class="total-row">
+          <span>Envío</span>
+          <span class="free" id="envio-val">Gratis</span>
+        </div>
+        <div class="total-row big">
+          <span>Total</span>
+          <span class="amount" id="total-val">$32.990</span>
+        </div>
+      </div>
+
+      <button class="btn-pay" id="btn-pay" onclick="processPay()">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Confirmar Pedido
+      </button>
+      <p class="field-error" id="pay-error" style="text-align:center; margin-top:12px;">No se pudo procesar el pedido. Intenta nuevamente.</p>
+
+      <div class="summary-secure">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Transacción encriptada SSL
+      </div>
+    </div>
+
+  </div><!-- /checkout-layout -->
+
+  <!-- PANTALLA CONFIRMACIÓN -->
+  <div class="confirm-screen" id="confirm-screen">
+    <div class="confirm-icon">✓</div>
+    <h2 class="confirm-title">¡Pedido Confirmado!</h2>
+    <p class="confirm-sub">Gracias por tu compra. Recibirás un correo con los detalles de tu pedido.</p>
+    <p class="confirm-ref" id="confirm-ref">Ref: CST-2026-00001</p>
+    <div class="confirm-btns">
+      <a href="catalogo.html" class="btn-outline-confirm">Seguir comprando</a>
+      <a href="index.html" class="btn-outline-confirm">Ir al inicio</a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="checkout-footer">
+    © 2026 COST · Todos los derechos reservados · Sitio web desarrollado por CrascPT
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:3001';
+    let couponApplied = false;
+    let selectedPayment = 'pse';
+    const BASE_PRICE = 32990;
+
+    // ── Método de pago ──
+    function selectPayment(method) {
+      selectedPayment = method;
+      document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
+      document.getElementById('pm-' + method).classList.add('selected');
+      const cardDetails = document.getElementById('card-details');
+      cardDetails.classList.toggle('show', method === 'tarjeta');
+    }
+
+    // ── Cupón ──
+    function applyCoupon() {
+      const val = document.getElementById('coupon-input').value.trim().toUpperCase();
+      const okEl = document.getElementById('coupon-ok');
+      if (val === 'COST10' && !couponApplied) {
+        couponApplied = true;
+        okEl.style.display = 'block';
+        document.getElementById('descuento-row').style.display = 'flex';
+        updateTotals();
+      } else if (couponApplied) {
+        okEl.style.display = 'block';
+      } else {
+        okEl.textContent = '✗ Cupón no válido';
+        okEl.style.color = 'var(--error)';
+        okEl.style.display = 'block';
+        setTimeout(() => { okEl.style.display = 'none'; }, 2500);
+      }
+    }
+
+    function updateTotals() {
+      const sub = BASE_PRICE;
+      const desc = couponApplied ? Math.round(sub * 0.1) : 0;
+      const total = sub - desc;
+      document.getElementById('subtotal').textContent = '$' + sub.toLocaleString('es-CO');
+      document.getElementById('descuento-val').textContent = '−$' + desc.toLocaleString('es-CO');
+      document.getElementById('total-val').textContent = '$' + total.toLocaleString('es-CO');
+    }
+
+    // ── Formatear tarjeta ──
+    function formatCard(input) {
+      let v = input.value.replace(/\D/g, '').substring(0, 16);
+      input.value = v.replace(/(.{4})/g, '$1 ').trim();
+      const typeEl = document.getElementById('card-type');
+      if (v.startsWith('4')) typeEl.textContent = 'VISA';
+      else if (v.startsWith('5')) typeEl.textContent = 'MC';
+      else typeEl.textContent = '';
+    }
+    function formatExpiry(input) {
+      let v = input.value.replace(/\D/g, '').substring(0, 4);
+      if (v.length >= 2) v = v.substring(0, 2) + ' / ' + v.substring(2);
+      input.value = v;
+    }
+
+    // ── Validación ──
+    function validate() {
+      const required = [
+        { id: 'nombre', fieldId: 'field-nombre' },
+        { id: 'apellido', fieldId: 'field-apellido' },
+        { id: 'email', fieldId: 'field-email' },
+        { id: 'telefono', fieldId: 'field-telefono' },
+        { id: 'direccion', fieldId: 'field-direccion' },
+        { id: 'ciudad', fieldId: 'field-ciudad' },
+        { id: 'dpto', fieldId: 'field-dpto' },
+      ];
+      let valid = true;
+      required.forEach(({ id, fieldId }) => {
+        const input = document.getElementById(id);
+        const field = document.getElementById(fieldId);
+        const empty = !input.value.trim() || (input.tagName === 'SELECT' && !input.value);
+        field.classList.toggle('has-error', empty);
+        if (empty) valid = false;
+      });
+      // Email format
+      const email = document.getElementById('email');
+      if (email.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+        document.getElementById('field-email').classList.add('has-error');
+        valid = false;
+      }
+      return valid;
+    }
+
+    // ── Procesar pago ──
+    async function processPay() {
+      if (!validate()) {
+        document.querySelector('.has-error input, .has-error select')
+          ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      const errorEl = document.getElementById('pay-error');
+      errorEl.style.display = 'none';
+
+      const btn = document.getElementById('btn-pay');
+      const btnOriginalHtml = btn.innerHTML;
+      btn.classList.add('loading');
+      btn.disabled = true;
+      btn.textContent = 'Procesando...';
+
+      const sub = BASE_PRICE;
+      const desc = couponApplied ? Math.round(sub * 0.1) : 0;
+      const total = sub - desc;
+
+      const payload = {
+        nombre: document.getElementById('nombre').value.trim(),
+        apellido: document.getElementById('apellido').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        telefono: document.getElementById('telefono').value.trim(),
+        direccion: document.getElementById('direccion').value.trim(),
+        ciudad: document.getElementById('ciudad').value.trim(),
+        departamento: document.getElementById('dpto').value,
+        productos: [
+          { nombre: 'COST Noir T-Shirt', precio: BASE_PRICE, cantidad: 1, talla: 'M', color: 'Negro' }
+        ],
+        subtotal: sub,
+        total: total,
+        metodoPago: selectedPayment,
+      };
+
+      try {
+        const res = await fetch(API_BASE + '/api/pedidos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) throw new Error('No se pudo procesar el pedido');
+        const data = await res.json();
+        const pedido = data.pedido || data;
+
+        document.getElementById('checkout-main').style.display = 'none';
+        document.getElementById('confirm-screen').classList.add('show');
+        document.getElementById('confirm-ref').textContent = 'Ref: ' + pedido.referencia;
+        // Avanzar steps
+        document.getElementById('step-3').classList.remove('active');
+        document.getElementById('step-3').classList.add('done');
+        document.getElementById('step-3').querySelector('.step-num').textContent = '✓';
+        document.getElementById('line-2-3').classList.add('done');
+        document.getElementById('step-4').classList.add('active');
+        document.getElementById('line-3-4').classList.add('done');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (err) {
+        errorEl.style.display = 'block';
+        btn.classList.remove('loading');
+        btn.disabled = false;
+        btn.innerHTML = btnOriginalHtml;
+      }
+    }
+
+    // ── Limpiar errores al escribir ──
+    document.querySelectorAll('.field input, .field select').forEach(el => {
+      el.addEventListener('input', () => {
+        el.closest('.field').classList.remove('has-error');
+      });
+    });
+  </script>
+</body>
+</html>
