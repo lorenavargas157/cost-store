@@ -1005,6 +1005,18 @@
     </div>
     <div class="footer-bottom">
       © 2026 COST. Todos los derechos reservados. Sitio web desarrollado por CrascPT
+      <a href="admin.html" style="
+        font-family:'Cinzel',serif;
+        font-size:9px;
+        letter-spacing:2px;
+        color:rgba(255,255,255,0.15);
+        text-decoration:none;
+        margin-left:16px;
+        transition:color 0.3s;
+      " onmouseover="this.style.color='rgba(255,255,255,0.5)'"
+         onmouseout="this.style.color='rgba(255,255,255,0.15)'">
+        ADMIN
+      </a>
     </div>
   </footer>
 
@@ -1048,7 +1060,20 @@
     }
 
     // ── Carrito ──
-    let cart = [];
+    const CART_KEY = 'cost_cart';
+    function loadCart() {
+      try {
+        const saved = localStorage.getItem(CART_KEY);
+        return saved ? JSON.parse(saved) : [];
+      } catch (err) {
+        return [];
+      }
+    }
+    function saveCart() {
+      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    }
+
+    let cart = loadCart();
 
     function openCart() {
       document.getElementById('cart-sidebar').classList.add('open');
@@ -1073,6 +1098,7 @@
       } else {
         cart.push({ name, price, qty: 1 });
       }
+      saveCart();
       renderCart();
       openCart();
     }
@@ -1173,6 +1199,7 @@
       }
     }
 
+    renderCart();
     cargarColeccionCaballero();
 
     // ── Reveal on scroll ──

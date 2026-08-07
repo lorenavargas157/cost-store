@@ -1,10 +1,24 @@
 const express = require('express');
+const multer = require('multer');
+const path = require('path');
 
 const Pedido = require('../models/Pedido');
 const { verifyToken } = require('../middleware/auth');
-const { enviarConfirmacionCliente, enviarNotificacionAdmin } = require('../utils/mailer');
+const { enviarConfirmacionCliente, enviarNotificacionAdmin, enviarActualizacionEstado } = require('../utils/mailer');
 
 const router = express.Router();
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, '..', 'uploads'));
+  },
+  filename: (req, file, cb) => {
+    const suffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, suffix + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage });
 
 function generarReferencia() {
   const anio = new Date().getFullYear();
@@ -58,9 +72,9 @@ router.get('/', verifyToken, async (req, res) => {
   }
 });
 
-router.patch('/:id/estado', verifyToken, async (req, res) => {
+router.patch('/:id/estado', verifyToken, upload.single('imagenGuia'), async (req, res) => {
   try {
-    const { estado } = req.body;
+    const { estado, guiaEnvio, transportadora } = req.body;
 
     const estadosValidos = ['pendiente', 'confirmado', 'enviado', 'entregado'];
     if (!estadosValidos.includes(estado)) {
@@ -73,10 +87,21 @@ router.patch('/:id/estado', verifyToken, async (req, res) => {
       return res.status(404).json({ error: 'Pedido no encontrado' });
     }
 
+    // Guardar estado anterior
+    const estadoAnterior = pedido.estado;
+
+    // Actualizar
     pedido.estado = estado;
+    if (guiaEnvio !== undefined) pedido.guiaEnvio = guiaEnvio;
+    if (transportadora !== undefined) pedido.transportadora = transportadora;
+    if (req.file) pedido.imagenGuia = req.file.filename;
     await pedido.save();
 
-    res.json(pedido);
+    // Enviar correo sin bloquear
+    enviarActualizacionEstado(pedido, estadoAnterior)
+      .catch(err => console.error('Error enviando correo de estado:', err));
+
+    res.json({ ok: true, pedido });
   } catch (err) {
     console.error('Error al actualizar el pedido:', err);
     res.status(500).json({ error: 'Error al actualizar el pedido' });

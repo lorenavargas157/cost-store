@@ -79,6 +79,18 @@ const pedidoSchema = new mongoose.Schema({
     enum: ['pendiente', 'confirmado', 'enviado', 'entregado'],
     default: 'pendiente',
   },
+  guiaEnvio: {
+    type: String,
+    default: '',
+  },
+  transportadora: {
+    type: String,
+    default: '',
+  },
+  imagenGuia: {
+    type: String,
+    default: '',
+  },
   referencia: {
     type: String,
     unique: true,

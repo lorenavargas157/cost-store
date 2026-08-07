@@ -976,6 +976,90 @@
       </select>
     </div>
 
+    <div id="guia-wrap" style="margin-top:16px;display:none;
+      border:1px solid #e8e8e8;padding:20px;">
+
+      <p style="font-family:'Cinzel',serif;font-size:10px;
+        letter-spacing:3px;text-transform:uppercase;
+        color:#111111;margin:0 0 16px;">
+        Información de Envío
+      </p>
+
+      <!-- Transportadora -->
+      <div style="margin-bottom:12px;">
+        <label style="font-family:'Cinzel',serif;font-size:9px;
+          letter-spacing:2px;text-transform:uppercase;
+          color:#999999;display:block;margin-bottom:6px;">
+          Transportadora *
+        </label>
+        <select id="transportadora-select" style="width:100%;
+          padding:10px 14px;border:1px solid #e8e8e8;
+          font-family:'Cormorant Garamond',serif;font-size:15px;
+          color:#111111;outline:none;background:#ffffff;
+          -webkit-appearance:none;cursor:pointer;">
+          <option value="">Seleccionar...</option>
+          <option value="TCC">TCC</option>
+          <option value="Servientrega">Servientrega</option>
+          <option value="Coordinadora">Coordinadora</option>
+          <option value="Interrapidísimo">Interrapidísimo</option>
+          <option value="Deprisa">Deprisa</option>
+          <option value="Envia">Envia</option>
+          <option value="4-72">4-72</option>
+          <option value="DHL">DHL</option>
+          <option value="FedEx">FedEx</option>
+          <option value="Otra">Otra</option>
+        </select>
+      </div>
+
+      <!-- Número guía -->
+      <div style="margin-bottom:12px;">
+        <label style="font-family:'Cinzel',serif;font-size:9px;
+          letter-spacing:2px;text-transform:uppercase;
+          color:#999999;display:block;margin-bottom:6px;">
+          Número de Guía *
+        </label>
+        <input type="text" id="guia-input"
+          placeholder="Ej: 1234567890"
+          style="width:100%;padding:10px 14px;
+          border:1px solid #e8e8e8;
+          font-family:'Cormorant Garamond',serif;font-size:15px;
+          color:#111111;outline:none;" />
+      </div>
+
+      <!-- Imagen guía (opcional) -->
+      <div style="margin-bottom:8px;">
+        <label style="font-family:'Cinzel',serif;font-size:9px;
+          letter-spacing:2px;text-transform:uppercase;
+          color:#999999;display:block;margin-bottom:6px;">
+          Imagen de la guía (opcional)
+        </label>
+        <input type="file" id="guia-imagen" accept="image/*"
+          style="width:100%;padding:8px;border:1px solid #e8e8e8;
+          font-family:'Cormorant Garamond',serif;font-size:13px;
+          color:#555555;cursor:pointer;"
+          onchange="previewGuiaImagen(this)" />
+        <div id="guia-img-preview" style="margin-top:8px;display:none;">
+          <img id="guia-img-thumb" style="max-width:100%;
+            max-height:160px;object-fit:contain;
+            border:1px solid #e8e8e8;" />
+        </div>
+        <!-- Si ya tiene imagen guardada -->
+        <div id="guia-img-actual" style="margin-top:8px;display:none;">
+          <p style="font-family:'Cinzel',serif;font-size:9px;
+            letter-spacing:1px;color:#999999;margin:0 0 4px;">
+            Imagen actual:</p>
+          <img id="guia-img-actual-thumb"
+            style="max-width:100%;max-height:120px;
+            object-fit:contain;border:1px solid #e8e8e8;" />
+        </div>
+      </div>
+
+      <p style="font-size:12px;color:#999999;margin:4px 0 0;
+        font-style:italic;">
+        La guía y transportadora se incluirán en el correo al cliente.
+      </p>
+    </div>
+
     <div class="error-msg" id="pedido-error"></div>
 
     <div class="modal-actions">
@@ -1527,19 +1611,67 @@
     document.getElementById('pedido-total-monto').textContent = formatoPrecio(pedido.total);
     document.getElementById('pedido-estado-select').value = pedido.estado;
 
+    const guiaWrap = document.getElementById('guia-wrap');
+    const guiaInput = document.getElementById('guia-input');
+    const transportadoraSelect = document.getElementById('transportadora-select');
+    const guiaImagenInput = document.getElementById('guia-imagen');
+    const guiaImgPreview = document.getElementById('guia-img-preview');
+    const guiaImgActual = document.getElementById('guia-img-actual');
+    const guiaImgActualThumb = document.getElementById('guia-img-actual-thumb');
+
+    guiaImagenInput.value = '';
+    guiaImgPreview.style.display = 'none';
+    transportadoraSelect.value = pedido.transportadora || '';
+    guiaInput.value = pedido.guiaEnvio || '';
+
+    if (pedido.imagenGuia) {
+      guiaImgActualThumb.src = API_BASE + '/uploads/' + pedido.imagenGuia;
+      guiaImgActual.style.display = 'block';
+    } else {
+      guiaImgActualThumb.src = '';
+      guiaImgActual.style.display = 'none';
+    }
+
+    guiaWrap.style.display = pedido.estado === 'enviado' ? 'block' : 'none';
+
     openModal('modal-pedido');
   }
+
+  document.getElementById('pedido-estado-select').addEventListener('change', function () {
+    document.getElementById('guia-wrap').style.display =
+      this.value === 'enviado' ? 'block' : 'none';
+  });
+
+  function previewGuiaImagen(input) {
+    const preview = document.getElementById('guia-img-preview');
+    const thumb = document.getElementById('guia-img-thumb');
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        thumb.src = e.target.result;
+        preview.style.display = 'block';
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+  window.previewGuiaImagen = previewGuiaImagen;
 
   document.getElementById('pedido-actualizar-btn').addEventListener('click', async function () {
     const errorEl = document.getElementById('pedido-error');
     const nuevoEstado = document.getElementById('pedido-estado-select').value;
     errorEl.textContent = '';
 
+    const fd = new FormData();
+    fd.append('estado', nuevoEstado);
+    fd.append('guiaEnvio', document.getElementById('guia-input').value);
+    fd.append('transportadora', document.getElementById('transportadora-select').value);
+    const imgFile = document.getElementById('guia-imagen').files[0];
+    if (imgFile) fd.append('imagenGuia', imgFile);
+
     try {
       const res = await apiFetch('/api/pedidos/' + pedidoActualId + '/estado', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ estado: nuevoEstado }),
+        body: fd,
       });
 
       if (!res.ok) throw new Error('No se pudo actualizar el estado');
