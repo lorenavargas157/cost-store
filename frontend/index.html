@@ -1048,7 +1048,7 @@
   </a>
 
   <script>
-    const API_BASE = 'http://localhost:3001';
+    const API_BASE = 'https://cost-store-production.up.railway.app';
 
     // ── Helpers ──
     function escapeHtml(str) {
@@ -1142,8 +1142,9 @@
 
     function homeProductCardHtml(p) {
       const imagen = (p.imagenes && p.imagenes.length) ? p.imagenes[0] : null;
+      const imagenSrc = imagen ? (imagen.startsWith('http') ? imagen : API_BASE + imagen) : null;
       const mediaHtml = imagen
-        ? `<img class="product-card-img" src="${API_BASE}${imagen}" alt="${escapeHtml(p.nombre)}">`
+        ? `<img class="product-card-img" src="${imagenSrc}" alt="${escapeHtml(p.nombre)}">`
         : `<div class="product-card-placeholder">
              <div class="placeholder-label" style="font-size:28px; opacity:0.2;">✦</div>
              <div class="placeholder-label">COST</div>

@@ -588,57 +588,16 @@
         </div>
         <div class="payment-methods">
 
-          <!-- PSE -->
-          <div class="payment-method selected" id="pm-pse" onclick="selectPayment('pse')">
+          <!-- WOMPI -->
+          <div class="payment-method selected" id="pm-wompi" onclick="selectPayment('wompi')">
             <div class="pm-radio"></div>
             <div class="pm-info">
-              <div class="pm-name">PSE – Pago en línea</div>
-              <div class="pm-desc">Débito bancario seguro</div>
+              <div class="pm-name">Wompi – Pago en línea</div>
+              <div class="pm-desc">PSE, tarjeta débito/crédito, Nequi, Bancolombia QR</div>
             </div>
             <div class="pm-badges">
               <span class="pm-badge">PSE</span>
-            </div>
-          </div>
-
-          <!-- TARJETA -->
-          <div class="payment-method" id="pm-tarjeta" onclick="selectPayment('tarjeta')">
-            <div class="pm-radio"></div>
-            <div class="pm-info">
-              <div class="pm-name">Tarjeta Débito / Crédito</div>
-              <div class="pm-desc">Visa, Mastercard, American Express</div>
-            </div>
-            <div class="pm-badges">
-              <span class="pm-badge">VISA</span>
-              <span class="pm-badge">MC</span>
-            </div>
-          </div>
-
-          <!-- Detalle tarjeta -->
-          <div class="card-details" id="card-details">
-            <div class="form-row full" style="margin-bottom:12px;">
-              <div class="field card-number-wrap" style="position:relative;">
-                <label>Número de tarjeta</label>
-                <input type="text" id="card-num" placeholder="0000 0000 0000 0000" maxlength="19"
-                  oninput="formatCard(this)" />
-                <span class="card-type-icon" id="card-type"></span>
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="field">
-                <label>Vencimiento</label>
-                <input type="text" id="card-exp" placeholder="MM / AA" maxlength="7"
-                  oninput="formatExpiry(this)" />
-              </div>
-              <div class="field">
-                <label>CVV</label>
-                <input type="text" id="card-cvv" placeholder="•••" maxlength="4" />
-              </div>
-            </div>
-            <div class="form-row full" style="margin-bottom:0;">
-              <div class="field">
-                <label>Nombre en la tarjeta</label>
-                <input type="text" id="card-name" placeholder="Como aparece en tu tarjeta" />
-              </div>
+              <span class="pm-badge">NEQUI</span>
             </div>
           </div>
 
@@ -706,8 +665,12 @@
       </div>
 
       <button class="btn-pay" id="btn-pay" onclick="processPay()">
-        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Confirmar Pedido
+        <svg viewBox="0 0 24 24" style="width:16px;height:16px;
+          stroke:currentColor;fill:none;stroke-width:1.5;">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        Ir a Pagar
       </button>
       <p class="field-error" id="pay-error" style="text-align:center; margin-top:12px;">No se pudo procesar el pedido. Intenta nuevamente.</p>
 
@@ -749,9 +712,9 @@
   </div>
 
   <script>
-    const API_BASE = 'http://localhost:3001';
+    const API_BASE = 'https://cost-store-production.up.railway.app';
     let couponApplied = false;
-    let selectedPayment = 'pse';
+    let selectedPayment = 'wompi';
     const BASE_PRICE = 32990;
 
     // ── Método de pago ──
@@ -759,8 +722,6 @@
       selectedPayment = method;
       document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
       document.getElementById('pm-' + method).classList.add('selected');
-      const cardDetails = document.getElementById('card-details');
-      cardDetails.classList.toggle('show', method === 'tarjeta');
     }
 
     // ── Cupón ──
@@ -789,21 +750,6 @@
       document.getElementById('subtotal').textContent = '$' + sub.toLocaleString('es-CO');
       document.getElementById('descuento-val').textContent = '−$' + desc.toLocaleString('es-CO');
       document.getElementById('total-val').textContent = '$' + total.toLocaleString('es-CO');
-    }
-
-    // ── Formatear tarjeta ──
-    function formatCard(input) {
-      let v = input.value.replace(/\D/g, '').substring(0, 16);
-      input.value = v.replace(/(.{4})/g, '$1 ').trim();
-      const typeEl = document.getElementById('card-type');
-      if (v.startsWith('4')) typeEl.textContent = 'VISA';
-      else if (v.startsWith('5')) typeEl.textContent = 'MC';
-      else typeEl.textContent = '';
-    }
-    function formatExpiry(input) {
-      let v = input.value.replace(/\D/g, '').substring(0, 4);
-      if (v.length >= 2) v = v.substring(0, 2) + ' / ' + v.substring(2);
-      input.value = v;
     }
 
     // ── Validación ──
@@ -868,7 +814,7 @@
         ],
         subtotal: sub,
         total: total,
-        metodoPago: selectedPayment,
+        metodoPago: selectedPayment === 'contra' ? 'contraentrega' : 'wompi',
       };
 
       try {

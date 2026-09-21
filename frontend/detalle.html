@@ -858,7 +858,7 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    const API_BASE = 'http://localhost:3001';
+    const API_BASE = 'https://cost-store-production.up.railway.app';
     const COLOR_HEX = { 'Negro': '#1a1a1a', 'Marfil': '#f0ebe0', 'Beige': '#c8b89a' };
 
     const CART_KEY = 'cost_cart';
@@ -956,14 +956,16 @@
       const mainEl = document.getElementById('gallery-main');
       const thumbsEl = document.getElementById('gallery-thumbs');
 
+      const imgSrc = (url) => url.startsWith('http') ? url : API_BASE + url;
+
       if (imagenes && imagenes.length) {
-        mainEl.innerHTML = `<img id="gallery-main-img" src="${API_BASE}${imagenes[0]}" style="width:100%;height:100%;object-fit:cover;">` + ZOOM_HINT_HTML;
+        mainEl.innerHTML = `<img id="gallery-main-img" src="${imgSrc(imagenes[0])}" style="width:100%;height:100%;object-fit:cover;">` + ZOOM_HINT_HTML;
 
         if (imagenes.length > 1) {
           thumbsEl.style.display = '';
           thumbsEl.innerHTML = imagenes.map((img, i) => `
             <div class="gallery-thumb${i === 0 ? ' active' : ''}" onclick="switchThumb(${i}, this)">
-              <img src="${API_BASE}${img}" style="width:100%;height:100%;object-fit:cover;">
+              <img src="${imgSrc(img)}" style="width:100%;height:100%;object-fit:cover;">
             </div>
           `).join('');
         } else {
@@ -986,7 +988,8 @@
       el.classList.add('active');
       const mainImg = document.getElementById('gallery-main-img');
       if (mainImg && productoActual && productoActual.imagenes) {
-        mainImg.src = API_BASE + productoActual.imagenes[idx];
+        const url = productoActual.imagenes[idx];
+        mainImg.src = url.startsWith('http') ? url : API_BASE + url;
       }
     }
 
@@ -1094,8 +1097,9 @@
     // ── Productos relacionados ──
     function relatedCardHtml(p) {
       const imagen = (p.imagenes && p.imagenes.length) ? p.imagenes[0] : null;
+      const imagenSrc = imagen ? (imagen.startsWith('http') ? imagen : API_BASE + imagen) : null;
       const mediaHtml = imagen
-        ? `<img src="${API_BASE}${imagen}" style="width:100%;height:100%;object-fit:cover;">`
+        ? `<img src="${imagenSrc}" style="width:100%;height:100%;object-fit:cover;">`
         : `<div class="related-placeholder" style="background:linear-gradient(160deg,#f5f5f5,#ececec);">
              <div style="font-size:40px;opacity:0.1;color:var(--dorado);font-family:'Cinzel',serif;">✦</div>
              <div style="font-family:'Cinzel',serif;font-size:12px;letter-spacing:3px;opacity:0.18;color:#111111;">Cost</div>

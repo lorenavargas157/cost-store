@@ -839,7 +839,7 @@
 
       <div class="config-card">
         <h3>Información de la tienda</h3>
-        <div class="info-row"><span>Backend</span><span>http://localhost:3001</span></div>
+        <div class="info-row"><span>Backend</span><span>https://cost-store-production.up.railway.app</span></div>
         <div class="info-row"><span>Estado de conexión</span><span id="connection-status">Verificando...</span></div>
       </div>
     </section>
@@ -1073,7 +1073,7 @@
 (function () {
   'use strict';
 
-  const API_BASE = 'http://localhost:3001';
+  const API_BASE = 'https://cost-store-production.up.railway.app';
   const TOKEN_KEY = 'costo_admin_token';
 
   let productosCache = [];
@@ -1625,7 +1625,9 @@
     guiaInput.value = pedido.guiaEnvio || '';
 
     if (pedido.imagenGuia) {
-      guiaImgActualThumb.src = API_BASE + '/uploads/' + pedido.imagenGuia;
+      guiaImgActualThumb.src = pedido.imagenGuia.startsWith('http')
+        ? pedido.imagenGuia
+        : API_BASE + '/uploads/' + pedido.imagenGuia;
       guiaImgActual.style.display = 'block';
     } else {
       guiaImgActualThumb.src = '';
