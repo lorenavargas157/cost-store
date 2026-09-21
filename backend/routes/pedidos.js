@@ -1,24 +1,11 @@
 const express = require('express');
-const multer = require('multer');
-const path = require('path');
 
 const Pedido = require('../models/Pedido');
 const { verifyToken } = require('../middleware/auth');
 const { enviarConfirmacionCliente, enviarNotificacionAdmin, enviarActualizacionEstado } = require('../utils/mailer');
+const { uploadGuia } = require('../utils/cloudinary');
 
 const router = express.Router();
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '..', 'uploads'));
-  },
-  filename: (req, file, cb) => {
-    const suffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, suffix + path.extname(file.originalname));
-  },
-});
-
-const upload = multer({ storage });
 
 function generarReferencia() {
   const anio = new Date().getFullYear();
@@ -72,7 +59,7 @@ router.get('/', verifyToken, async (req, res) => {
   }
 });
 
-router.patch('/:id/estado', verifyToken, upload.single('imagenGuia'), async (req, res) => {
+router.patch('/:id/estado', verifyToken, uploadGuia.single('imagenGuia'), async (req, res) => {
   try {
     const { estado, guiaEnvio, transportadora } = req.body;
 
@@ -94,7 +81,7 @@ router.patch('/:id/estado', verifyToken, upload.single('imagenGuia'), async (req
     pedido.estado = estado;
     if (guiaEnvio !== undefined) pedido.guiaEnvio = guiaEnvio;
     if (transportadora !== undefined) pedido.transportadora = transportadora;
-    if (req.file) pedido.imagenGuia = req.file.filename;
+    if (req.file) pedido.imagenGuia = req.file.path;
     await pedido.save();
 
     // Enviar correo sin bloquear

@@ -1,6 +1,4 @@
 const nodemailer = require('nodemailer');
-const fs = require('fs');
-const path = require('path');
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -321,23 +319,12 @@ async function enviarActualizacionEstado(pedido, estadoAnterior) {
 
   let imagenGuiaHtml = '';
   if (pedido.imagenGuia && pedido.estado === 'enviado') {
-    try {
-      const imgPath = path.join(__dirname, '../uploads/', pedido.imagenGuia);
-      if (fs.existsSync(imgPath)) {
-        const imgBuffer = fs.readFileSync(imgPath);
-        const imgBase64 = imgBuffer.toString('base64');
-        const ext = path.extname(pedido.imagenGuia).toLowerCase().replace('.', '');
-        const mimeType = ext === 'jpg' ? 'jpeg' : ext;
-        imagenGuiaHtml = `
-          <img src="data:image/${mimeType};base64,${imgBase64}"
-               style="max-width:100%;margin-top:12px;
-               border:1px solid #e8e8e8;display:block;"
-               alt="Guía de envío" />
-        `;
-      }
-    } catch(e) {
-      console.error('Error leyendo imagen guía:', e);
-    }
+    imagenGuiaHtml = `
+      <img src="${pedido.imagenGuia}"
+           style="max-width:100%;margin-top:12px;
+           border:1px solid #e8e8e8;display:block;"
+           alt="Guía de envío" />
+    `;
   }
 
   const guiaHtml = (pedido.estado === 'enviado' && pedido.guiaEnvio)

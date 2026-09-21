@@ -1,24 +1,10 @@
 const express = require('express');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 
 const Producto = require('../models/Producto');
 const { verifyToken } = require('../middleware/auth');
+const { uploadProducto, cloudinary } = require('../utils/cloudinary');
 
 const router = express.Router();
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '..', 'uploads'));
-  },
-  filename: (req, file, cb) => {
-    const suffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, suffix + path.extname(file.originalname));
-  },
-});
-
-const upload = multer({ storage });
 
 router.get('/', async (req, res) => {
   try {
@@ -56,7 +42,7 @@ router.get('/:id', async (req, res) => {
 router.post(
   '/',
   verifyToken,
-  upload.array('imagenes', 4),
+  uploadProducto.array('imagenes', 4),
   async (req, res) => {
     try {
       const datos = { ...req.body };
@@ -74,7 +60,7 @@ router.post(
       }
 
       if (req.files && req.files.length > 0) {
-        datos.imagenes = req.files.map((file) => `/uploads/${file.filename}`);
+        datos.imagenes = req.files.map((file) => file.path);
       }
 
       const producto = new Producto(datos);
@@ -90,7 +76,7 @@ router.post(
 router.put(
   '/:id',
   verifyToken,
-  upload.array('imagenes', 4),
+  uploadProducto.array('imagenes', 4),
   async (req, res) => {
     try {
       const producto = await Producto.findById(req.params.id);
@@ -114,7 +100,7 @@ router.put(
       }
 
       if (req.files && req.files.length > 0) {
-        datos.imagenes = req.files.map((file) => `/uploads/${file.filename}`);
+        datos.imagenes = req.files.map((file) => file.path);
       }
 
       Object.assign(producto, datos);
@@ -136,14 +122,14 @@ router.delete('/:id', verifyToken, async (req, res) => {
     }
 
     if (producto.imagenes && producto.imagenes.length > 0) {
-      producto.imagenes.forEach((imagenPath) => {
-        const filePath = path.join(
-          __dirname,
-          '..',
-          imagenPath.replace(/^\/+/, '')
-        );
-        fs.unlink(filePath, () => {});
-      });
+      await Promise.all(
+        producto.imagenes.map((url) => {
+          const match = url.match(/\/cost-store\/productos\/([^/.]+)/);
+          if (!match) return Promise.resolve();
+          const publicId = 'cost-store/productos/' + match[1];
+          return cloudinary.uploader.destroy(publicId).catch(() => {});
+        })
+      );
     }
 
     await producto.deleteOne();
