@@ -624,18 +624,7 @@
       <div class="summary-title">Resumen del Pedido</div>
 
       <div class="summary-items" id="summary-items">
-        <!-- Ítems de ejemplo — se reemplaza dinámicamente -->
-        <div class="summary-item">
-          <div class="summary-item-img">
-            ✝
-            <div class="item-qty-badge">1</div>
-          </div>
-          <div class="summary-item-info">
-            <div class="summary-item-name">COST Noir T-Shirt</div>
-            <div class="summary-item-detail">Negro · Talla M</div>
-          </div>
-          <div class="summary-item-price">$32.990</div>
-        </div>
+        <!-- Se llena dinámicamente desde el carrito real (localStorage) -->
       </div>
 
       <!-- CUPÓN -->
@@ -714,9 +703,57 @@
 
   <script>
     const API_BASE = 'https://cost-store-production.up.railway.app';
+
+    // ── Carrito real ──
+    const CART_KEY = 'cost_cart';
+    function loadCart() {
+      try {
+        return JSON.parse(localStorage.getItem(CART_KEY)) || [];
+      } catch { return []; }
+    }
+    let cart = loadCart();
+
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+    }
+    function formatoPrecio(valor) {
+      return '$' + (Number(valor) || 0).toLocaleString('es-CO');
+    }
+    function getSubtotal() {
+      return cart.reduce((s, item) => {
+        const precio = Number(item.price || item.precio) || 0;
+        const cantidad = Number(item.qty || item.cantidad) || 1;
+        return s + precio * cantidad;
+      }, 0);
+    }
+    function renderSummaryItems() {
+      const wrap = document.getElementById('summary-items');
+      wrap.innerHTML = cart.map(item => {
+        const nombre = item.name || item.nombre || '';
+        const precio = Number(item.price || item.precio) || 0;
+        const cantidad = Number(item.qty || item.cantidad) || 1;
+        const talla = item.talla || item.size || '';
+        const color = item.color || '';
+        const detalle = [color, talla ? `Talla ${talla}` : ''].filter(Boolean).join(' · ');
+        return `
+          <div class="summary-item">
+            <div class="summary-item-img">
+              ✦
+              <div class="item-qty-badge">${cantidad}</div>
+            </div>
+            <div class="summary-item-info">
+              <div class="summary-item-name">${escapeHtml(nombre)}</div>
+              ${detalle ? `<div class="summary-item-detail">${escapeHtml(detalle)}</div>` : ''}
+            </div>
+            <div class="summary-item-price">${formatoPrecio(precio * cantidad)}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
     let couponApplied = false;
     let selectedPayment = 'wompi';
-    const BASE_PRICE = 32990;
 
     // ── Método de pago ──
     function selectPayment(method) {
@@ -745,12 +782,12 @@
     }
 
     function updateTotals() {
-      const sub = BASE_PRICE;
+      const sub = getSubtotal();
       const desc = couponApplied ? Math.round(sub * 0.1) : 0;
       const total = sub - desc;
-      document.getElementById('subtotal').textContent = '$' + sub.toLocaleString('es-CO');
-      document.getElementById('descuento-val').textContent = '−$' + desc.toLocaleString('es-CO');
-      document.getElementById('total-val').textContent = '$' + total.toLocaleString('es-CO');
+      document.getElementById('subtotal').textContent = formatoPrecio(sub);
+      document.getElementById('descuento-val').textContent = '−' + formatoPrecio(desc);
+      document.getElementById('total-val').textContent = formatoPrecio(total);
     }
 
     // ── Validación ──
@@ -802,16 +839,22 @@
 
     // Wompi redirige de vuelta a esta misma página (?step=4) para métodos
     // como PSE que requieren salir a la banca en línea, en vez de resolver
-    // todo dentro del widget embebido.
-    (function handleWompiRedirect() {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('step') === '4') {
-        const refPendiente = localStorage.getItem('cost_pending_ref');
-        localStorage.removeItem('cost_cart');
-        localStorage.removeItem('cost_pending_ref');
-        mostrarPaso(4, refPendiente || '');
-      }
-    })();
+    // todo dentro del widget embebido. En ese caso NO se debe redirigir al
+    // catálogo aunque el carrito ya esté vacío (se limpia tras pagar).
+    const params = new URLSearchParams(window.location.search);
+    const esRetornoPago = params.get('step') === '4';
+
+    if (esRetornoPago) {
+      const refPendiente = localStorage.getItem('cost_pending_ref');
+      localStorage.removeItem('cost_cart');
+      localStorage.removeItem('cost_pending_ref');
+      mostrarPaso(4, refPendiente || '');
+    } else if (cart.length === 0) {
+      window.location.href = 'catalogo.html';
+    } else {
+      renderSummaryItems();
+      updateTotals();
+    }
 
     // ── Procesar pago ──
     async function processPay() {
@@ -830,7 +873,7 @@
       btn.disabled = true;
       btn.textContent = 'Procesando...';
 
-      const sub = BASE_PRICE;
+      const sub = getSubtotal();
       const desc = couponApplied ? Math.round(sub * 0.1) : 0;
       const total = sub - desc;
 
@@ -842,9 +885,13 @@
         direccion: document.getElementById('direccion').value.trim(),
         ciudad: document.getElementById('ciudad').value.trim(),
         departamento: document.getElementById('dpto').value,
-        productos: [
-          { nombre: 'COST Noir T-Shirt', precio: BASE_PRICE, cantidad: 1, talla: 'M', color: 'Negro' }
-        ],
+        productos: cart.map(item => ({
+          nombre: item.name || item.nombre,
+          precio: item.price || item.precio,
+          cantidad: item.qty || item.cantidad || 1,
+          talla: item.talla || item.size || '',
+          color: item.color || '',
+        })),
         subtotal: sub,
         total: total,
         metodoPago: selectedPayment === 'contra' ? 'contraentrega' : 'wompi',
