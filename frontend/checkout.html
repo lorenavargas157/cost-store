@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <script src="https://checkout.wompi.co/widget.js" data-render="false"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -780,6 +781,38 @@
       return valid;
     }
 
+    // ── Avanzar a paso de confirmación ──
+    function mostrarPaso(paso, referencia) {
+      if (paso !== 4) return;
+
+      document.getElementById('checkout-main').style.display = 'none';
+      document.getElementById('confirm-screen').classList.add('show');
+      if (referencia) {
+        document.getElementById('confirm-ref').textContent = 'Ref: ' + referencia;
+      }
+      // Avanzar steps
+      document.getElementById('step-3').classList.remove('active');
+      document.getElementById('step-3').classList.add('done');
+      document.getElementById('step-3').querySelector('.step-num').textContent = '✓';
+      document.getElementById('line-2-3').classList.add('done');
+      document.getElementById('step-4').classList.add('active');
+      document.getElementById('line-3-4').classList.add('done');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Wompi redirige de vuelta a esta misma página (?step=4) para métodos
+    // como PSE que requieren salir a la banca en línea, en vez de resolver
+    // todo dentro del widget embebido.
+    (function handleWompiRedirect() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('step') === '4') {
+        const refPendiente = localStorage.getItem('cost_pending_ref');
+        localStorage.removeItem('cost_cart');
+        localStorage.removeItem('cost_pending_ref');
+        mostrarPaso(4, refPendiente || '');
+      }
+    })();
+
     // ── Procesar pago ──
     async function processPay() {
       if (!validate()) {
@@ -817,6 +850,12 @@
         metodoPago: selectedPayment === 'contra' ? 'contraentrega' : 'wompi',
       };
 
+      function restaurarBoton() {
+        btn.classList.remove('loading');
+        btn.disabled = false;
+        btn.innerHTML = btnOriginalHtml;
+      }
+
       try {
         const res = await fetch(API_BASE + '/api/pedidos', {
           method: 'POST',
@@ -828,24 +867,43 @@
         const data = await res.json();
         const pedido = data.pedido || data;
 
-        localStorage.removeItem('cost_cart');
+        if (selectedPayment === 'contra') {
+          localStorage.removeItem('cost_cart');
+          mostrarPaso(4, pedido.referencia);
+          return;
+        }
 
-        document.getElementById('checkout-main').style.display = 'none';
-        document.getElementById('confirm-screen').classList.add('show');
-        document.getElementById('confirm-ref').textContent = 'Ref: ' + pedido.referencia;
-        // Avanzar steps
-        document.getElementById('step-3').classList.remove('active');
-        document.getElementById('step-3').classList.add('done');
-        document.getElementById('step-3').querySelector('.step-num').textContent = '✓';
-        document.getElementById('line-2-3').classList.add('done');
-        document.getElementById('step-4').classList.add('active');
-        document.getElementById('line-3-4').classList.add('done');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Wompi: la firma de integridad se calcula en el backend
+        // (el secreto de integridad nunca debe viajar al navegador)
+        const firmaRes = await fetch(API_BASE + '/api/pedidos/wompi/firma/' + encodeURIComponent(pedido.referencia));
+        if (!firmaRes.ok) throw new Error('No se pudo iniciar el pago');
+        const firma = await firmaRes.json();
+
+        localStorage.setItem('cost_pending_ref', pedido.referencia);
+
+        const checkout = new WidgetCheckout({
+          currency: firma.currency,
+          amountInCents: firma.amountInCents,
+          reference: firma.reference,
+          publicKey: 'pub_prod_RndEyK2ysL0JItbFqt4uTTkaAiVEuOzk',
+          signature: { integrity: firma.signature },
+          redirectUrl: window.location.origin + '/checkout.html?step=4',
+        });
+
+        checkout.open(function (result) {
+          const transaction = result.transaction;
+          if (transaction && transaction.status === 'APPROVED') {
+            localStorage.removeItem('cost_cart');
+            localStorage.removeItem('cost_pending_ref');
+            mostrarPaso(4, pedido.referencia);
+          } else {
+            restaurarBoton();
+            alert('Pago no completado. Intenta de nuevo.');
+          }
+        });
       } catch (err) {
         errorEl.style.display = 'block';
-        btn.classList.remove('loading');
-        btn.disabled = false;
-        btn.innerHTML = btnOriginalHtml;
+        restaurarBoton();
       }
     }
 

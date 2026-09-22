@@ -71,7 +71,7 @@ const pedidoSchema = new mongoose.Schema({
   },
   metodoPago: {
     type: String,
-    enum: ['pse', 'tarjeta', 'contraentrega'],
+    enum: ['wompi', 'contraentrega'],
     required: true,
   },
   estado: {
@@ -90,6 +90,9 @@ const pedidoSchema = new mongoose.Schema({
   imagenGuia: {
     type: String,
     default: '',
+  },
+  wompiTransactionId: {
+    type: String,
   },
   referencia: {
     type: String,

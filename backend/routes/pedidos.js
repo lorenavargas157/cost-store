@@ -1,4 +1,5 @@
 const express = require('express');
+const crypto = require('crypto');
 
 const Pedido = require('../models/Pedido');
 const { verifyToken } = require('../middleware/auth');
@@ -93,6 +94,72 @@ router.patch('/:id/estado', verifyToken, uploadGuia.single('imagenGuia'), async 
     console.error('Error al actualizar el pedido:', err);
     res.status(500).json({ error: 'Error al actualizar el pedido' });
   }
+});
+
+// Firma de integridad para abrir el widget de Wompi.
+// Público (lo necesita el checkout anónimo), pero solo firma pedidos que ya
+// existen en la base de datos: nunca acepta un monto/referencia arbitrarios
+// del cliente, y el secreto de integridad nunca sale del backend.
+router.get('/wompi/firma/:referencia', async (req, res) => {
+  try {
+    const pedido = await Pedido.findOne({ referencia: req.params.referencia });
+
+    if (!pedido) {
+      return res.status(404).json({ error: 'Pedido no encontrado' });
+    }
+
+    const amountInCents = Math.round(pedido.total * 100);
+    const cadena = pedido.referencia + amountInCents + 'COP' + process.env.WOMPI_INTEGRITY_SECRET;
+    const signature = crypto.createHash('sha256').update(cadena).digest('hex');
+
+    res.json({
+      signature,
+      amountInCents,
+      currency: 'COP',
+      reference: pedido.referencia,
+    });
+  } catch (err) {
+    console.error('Error al generar firma de Wompi:', err);
+    res.status(500).json({ error: 'Error al generar la firma' });
+  }
+});
+
+router.post('/wompi/webhook', async (req, res) => {
+  const { event, data, signature } = req.body;
+
+  // Verificar firma
+  const integritySecret = process.env.WOMPI_INTEGRITY_SECRET;
+  const checksum = signature?.checksum;
+  const properties = signature?.properties || [];
+
+  const concatenated = properties.map(p => {
+    const parts = p.split('.');
+    let val = data;
+    for (const part of parts) val = val?.[part];
+    return val;
+  }).join('') + integritySecret;
+
+  const hash = crypto.createHash('sha256').update(concatenated).digest('hex');
+
+  if (hash !== checksum) {
+    return res.status(401).json({ error: 'Firma inválida' });
+  }
+
+  if (event === 'transaction.updated') {
+    const transaction = data.transaction;
+    if (transaction.status === 'APPROVED') {
+      const referencia = transaction.reference;
+      const pedido = await Pedido.findOne({ referencia });
+      if (pedido && pedido.estado === 'pendiente') {
+        pedido.estado = 'confirmado';
+        pedido.wompiTransactionId = transaction.id;
+        await pedido.save();
+        await enviarActualizacionEstado(pedido, 'pendiente');
+      }
+    }
+  }
+
+  res.json({ received: true });
 });
 
 module.exports = router;
