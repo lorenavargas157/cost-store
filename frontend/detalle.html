@@ -899,9 +899,10 @@
     document.getElementById('cart-close').addEventListener('click', closeCart);
     document.getElementById('cart-overlay').addEventListener('click', closeCart);
 
-    function addToCart(name, price) {
-      const ex = cart.find(i => i.name === name);
-      if (ex) ex.qty++; else cart.push({ name, price, qty: 1 });
+    function addToCart(name, price, extra = {}) {
+      const { talla = '', color = '', image = '' } = extra;
+      const ex = cart.find(i => i.name === name && (i.talla || '') === talla && (i.color || '') === color);
+      if (ex) ex.qty++; else cart.push({ name, price, qty: 1, talla, color, image });
       saveCart();
       renderCart();
     }
@@ -913,15 +914,19 @@
       badge.textContent = count;
       document.getElementById('cart-total').textContent = '$' + total.toLocaleString('es-CO');
       if (!cart.length) { body.innerHTML = '<p class="cart-empty">Tu carrito está vacío.</p>'; return; }
-      body.innerHTML = cart.map(item => `
+      body.innerHTML = cart.map(item => {
+        const detalle = [item.color, item.talla].filter(Boolean).join(' · ');
+        return `
         <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid #e8e8e8;">
           <div>
             <div style="font-family:'Cinzel',serif;font-size:12px;letter-spacing:1px;color:#111111;margin-bottom:4px;">${item.name}</div>
+            ${detalle ? `<div style="font-size:12px;color:var(--gris-texto);margin-bottom:2px;">${detalle}</div>` : ''}
             <div style="font-size:13px;color:var(--gris-texto);">Cantidad: ${item.qty}</div>
           </div>
           <div style="color:#111111;font-size:16px;">$${(item.price*item.qty).toLocaleString('es-CO')}</div>
         </div>
-      `).join('');
+      `;
+      }).join('');
     }
 
     // ── Añadir desde detalle ──
@@ -929,10 +934,9 @@
       if (!productoActual || !productoActual.stock) return;
       const qty = parseInt(document.getElementById('qty').value);
       const color = document.getElementById('color-selected').textContent;
-      const size = document.getElementById('size-selected').textContent;
-      const detalles = [color, size].filter(Boolean).join(', ');
-      const name = detalles ? `${productoActual.nombre} (${detalles})` : productoActual.nombre;
-      for (let i = 0; i < qty; i++) addToCart(name, productoActual.precio);
+      const talla = document.getElementById('size-selected').textContent;
+      const image = (productoActual.imagenes && productoActual.imagenes[0]) || '';
+      for (let i = 0; i < qty; i++) addToCart(productoActual.nombre, productoActual.precio, { talla, color, image });
       showToast('Añadido al carrito ✓');
       setTimeout(openCart, 600);
     }

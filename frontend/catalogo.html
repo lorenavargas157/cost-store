@@ -1116,9 +1116,10 @@
     document.getElementById('cart-close').addEventListener('click', closeCart);
     document.getElementById('cart-overlay').addEventListener('click', closeCart);
 
-    function addToCart(name, price) {
-      const ex = cart.find(i => i.name === name);
-      if (ex) { ex.qty++; } else { cart.push({ name, price, qty: 1 }); }
+    function addToCart(name, price, extra = {}) {
+      const { talla = '', color = '', image = '' } = extra;
+      const ex = cart.find(i => i.name === name && (i.talla || '') === talla && (i.color || '') === color);
+      if (ex) { ex.qty++; } else { cart.push({ name, price, qty: 1, talla, color, image }); }
       saveCart();
       renderCart();
       openCart();
@@ -1131,15 +1132,19 @@
       badge.textContent = count;
       document.getElementById('cart-total').textContent = '$' + total.toLocaleString('es-CO');
       if (!cart.length) { body.innerHTML = '<p class="cart-empty">Tu carrito está vacío.</p>'; return; }
-      body.innerHTML = cart.map(item => `
+      body.innerHTML = cart.map(item => {
+        const detalle = [item.color, item.talla].filter(Boolean).join(' · ');
+        return `
         <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid #e8e8e8;">
           <div>
             <div style="font-family:'Cinzel',serif;font-size:12px;letter-spacing:1px;color:#111111;margin-bottom:4px;">${item.name}</div>
+            ${detalle ? `<div style="font-size:12px;color:var(--gris-texto);margin-bottom:2px;">${detalle}</div>` : ''}
             <div style="font-size:13px;color:var(--gris-texto);">Cantidad: ${item.qty}</div>
           </div>
           <div style="color:#111111;font-size:16px;">$${(item.price*item.qty).toLocaleString('es-CO')}</div>
         </div>
-      `).join('');
+      `;
+      }).join('');
     }
 
     // ── Favoritos ──
@@ -1274,7 +1279,10 @@
       const btn = e.target.closest('[data-add-id]');
       if (!btn) return;
       const producto = todosLosProductos.find(p => p._id === btn.getAttribute('data-add-id'));
-      if (producto) addToCart(producto.nombre, producto.precio);
+      if (producto) {
+        const image = (producto.imagenes && producto.imagenes[0]) || '';
+        addToCart(producto.nombre, producto.precio, { talla: '', color: '', image });
+      }
     });
 
     async function cargarProductos() {
